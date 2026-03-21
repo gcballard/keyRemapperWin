@@ -1,0 +1,188 @@
+{
+  "profiles": [
+    {
+      "name": "Mac-like Shortcuts",
+      "keybindings": [
+
+        // === Cmd (WinL) specific key overrides — must come before the general letter rule ===
+
+        // Cmd+Q → close app (Alt+F4), overrides the general Ctrl+Q fallback
+        {
+          "keys": ["Q"],
+          "if": { "WinL": true },
+          "send": ["WinL:up AltL:down F4 AltL:up", null]
+        },
+
+        // Cmd+Backspace → delete from cursor to start of line (Shift+Home, Backspace)
+        {
+          "keys": ["Backspace"],
+          "if": { "WinL": true },
+          "send": ["WinL:up ShiftL:down Home ShiftL:up Backspace", null]
+        },
+
+        // Cmd+Shift+` → reverse same-app window switch via window-switcher (default Alt+`)
+        {
+          "keys": ["GraveAccent"],
+          "if": { "WinL": true, "ShiftL": true },
+          "send": ["WinL:up ShiftL:up AltL:down ShiftL:down GraveAccent ShiftL:up AltL:up ShiftL:down", null]
+        },
+
+        // Cmd+` → switch windows within the same app via window-switcher (default Alt+`)
+        {
+          "keys": ["GraveAccent"],
+          "if": { "WinL": true },
+          "send": ["WinL:up AltL:down GraveAccent AltL:up", null]
+        },
+
+        // === Native Windows escape hatch ===
+        // Fn is usually handled in keyboard firmware on Windows and is not exposed here,
+        // so CtrlL is the reliable extra modifier for reaching native Win shortcuts.
+        {
+          "keys": ["V", "R", "E", "I", "X", "D", "A", "N"],
+          "if": { "WinL": true, "CtrlL": true },
+          "send": ["CtrlL:up WinL:down currentKey:down currentKey:up WinL:up CtrlL:down", null]
+        },
+        {
+          "keys": ["Tab", "LeftArrow", "RightArrow", "UpArrow", "DownArrow"],
+          "if": { "WinL": true, "CtrlL": true },
+          "send": ["CtrlL:up WinL:down currentKey:down currentKey:up WinL:up CtrlL:down", null]
+        },
+
+        // === Cmd+Arrow → line / document navigation ===
+        // Holding Shift while pressing these naturally produces Shift+Home/End etc.
+        { "keys": ["LeftArrow"],  "if": { "WinL": true }, "send": ["WinL:up Home", null] },
+        { "keys": ["RightArrow"], "if": { "WinL": true }, "send": ["WinL:up End", null] },
+        { "keys": ["UpArrow"],    "if": { "WinL": true }, "send": ["WinL:up CtrlL:down Home CtrlL:up", null] },
+        { "keys": ["DownArrow"],  "if": { "WinL": true }, "send": ["WinL:up CtrlL:down End CtrlL:up", null] },
+
+        // === Opt (AltL) → word-level navigation ===
+
+        // Opt+Left/Right → jump one word back/forward (Ctrl+Arrow)
+        // AltL is suppressed globally below, so it never reaches the OS — no need to lift/re-press it.
+        { "keys": ["LeftArrow", "RightArrow"], "if": { "AltL": true }, "send": ["CtrlL:down currentKey:down currentKey:up CtrlL:up", null] },
+
+        // Opt+Backspace → delete one word backwards (Ctrl+Backspace)
+        { "keys": ["Backspace"], "if": { "AltL": true }, "send": ["CtrlL:down Backspace CtrlL:up", null] },
+
+        // Cmd+Shift+Enter → Ctrl+Shift+Enter
+        {
+          "keys": ["Enter"],
+          "if": { "WinL": true, "ShiftL": true, "isAltTabMode": false },
+          "send": [
+            "ShiftL:up CtrlL:down ShiftL:down Enter:down Enter:up ShiftL:up CtrlL:up ShiftL:down",
+            null
+          ]
+        },
+
+        // Cmd+Enter → Ctrl+Enter
+        {
+          "keys": ["Enter"],
+          "if": { "WinL": true, "isAltTabMode": false },
+          "send": ["CtrlL:down Enter:down Enter:up CtrlL:up", null]
+        },
+
+        // === General Cmd+Shift+letter → Ctrl+Shift+letter (must be before plain Cmd+letter) ===
+        {
+          "keys": [
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+          ],
+          "if": { "WinL": true, "ShiftL": true },
+          "send": [
+            "ShiftL:up CtrlL:down ShiftL:down currentKey:down currentKey:up ShiftL:up CtrlL:up ShiftL:down",
+            null
+          ]
+        },
+
+        // === General Cmd+letter/number/symbol → Ctrl+key ===
+        // Q is intentionally excluded — handled by the specific Cmd+Q rule above
+        {
+          "keys": [
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+            "N", "O", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
+            "Minus", "Equal", "BracketL", "BracketR", "Backslash",
+            "Semicolon", "Quote", "Comma", "Period", "ForwardSlash"
+          ],
+          "if": { "WinL": true },
+          "send": ["CtrlL:down currentKey:down currentKey:up CtrlL:up", null]
+        },
+
+        // === App switcher (Cmd+Tab → Alt+Tab mode) ===
+
+        // Cmd+Tab → enter the Alt+Tab switcher
+        {
+          "keys": ["Tab"],
+          "if": { "WinL": true, "isAltTabMode": false },
+          "set": { "isAltTabMode": true },
+          "send": ["WinL:up AltL:down Tab", null]
+        },
+        // While in switcher, Tab keeps cycling
+        {
+          "keys": ["Tab"],
+          "if": { "isAltTabMode": true },
+          "send": ["Tab", null]
+        },
+        // Esc or Enter confirms/cancels switcher
+        {
+          "keys": ["Esc", "Enter"],
+          "if": { "isAltTabMode": true },
+          "set": { "isAltTabMode": false },
+          "send": ["currentKey:down", "currentKey:up"],
+          "afterKeyUp": "AltL:up"
+        },
+
+        // === WinL key handling ===
+
+        // BUG FIX: conditional WinL (altTabMode) MUST come before the unconditional catch-all.
+        // Previously the order was reversed — the catch-all always won, AltL:up was never sent,
+        // leaving Alt stuck down and the keyboard appearing "broken".
+
+        // WinL release while in the switcher → release AltL so Alt+Tab closes cleanly
+        {
+          "keys": ["WinL"],
+          "if": { "isAltTabMode": true },
+          "setOnKeyUp": { "isAltTabMode": false },
+          "send": [null, "AltL:up"]
+        },
+        // WinL alone → suppress (prevents Windows Start menu from opening)
+        {
+          "keys": ["WinL"],
+          "send": [null, null]
+        },
+
+        // Cmd+Space → Windows Search / launcher (Spotlight equivalent)
+        {
+          "keys": ["Space"],
+          "if": { "WinL": true },
+          "send": ["WinL:down WinL:up", null]
+        },
+
+        // Suppress standalone AltL reaching Windows — prevents menu bar activation.
+        // KeyRemapper still tracks AltL internally, so all "if": { "AltL": true } rules above
+        // continue to work. This makes AltL behave like Mac's Option key (modifier only,
+        // never activates OS menus). Must be last so specific AltL+key rules take priority.
+        { "keys": ["AltL"], "send": [null, null] }
+
+      ],
+      "tests": [
+        // Cmd+letter → Ctrl+letter
+        ["WinL:down C:down C:up WinL:up", "CtrlL:down C:down C:up CtrlL:up"],
+        // Cmd+Enter → Ctrl+Enter
+        ["WinL:down Enter:down Enter:up WinL:up", "CtrlL:down Enter:down Enter:up CtrlL:up"],
+        // Cmd+Shift+Enter → Ctrl+Shift+Enter
+        ["WinL:down ShiftL:down Enter:down Enter:up ShiftL:up WinL:up", "ShiftL:up CtrlL:down ShiftL:down Enter:down Enter:up ShiftL:up CtrlL:up ShiftL:down ShiftL:up"],
+        // Cmd+` → Alt+`
+        ["WinL:down GraveAccent:down GraveAccent:up WinL:up", "WinL:up AltL:down GraveAccent:down GraveAccent:up AltL:up"],
+        // Ctrl+Cmd+V → native Win+V
+        ["CtrlL:down WinL:down V:down V:up WinL:up CtrlL:up", "CtrlL:down CtrlL:up WinL:down V:down V:up WinL:up CtrlL:down CtrlL:up"],
+        // Ctrl+Cmd+Tab → native Win+Tab
+        ["CtrlL:down WinL:down Tab:down Tab:up WinL:up CtrlL:up", "CtrlL:down CtrlL:up WinL:down Tab:down Tab:up WinL:up CtrlL:down CtrlL:up"],
+        // Cmd+Space → Windows key tap
+        ["WinL:down Space:down Space:up WinL:up", "WinL:down WinL:up"],
+        // WinL alone → nothing
+        ["WinL:down WinL:up", ""]
+      ]
+    }
+  ]
+}
