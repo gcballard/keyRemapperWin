@@ -43,7 +43,12 @@
           "send": ["CtrlL:up WinL:down currentKey:down currentKey:up WinL:up CtrlL:down", null]
         },
         {
-          "keys": ["Tab", "LeftArrow", "RightArrow", "UpArrow", "DownArrow"],
+          "keys": ["LeftArrow", "RightArrow"],
+          "if": { "WinL": true, "CtrlL": true },
+          "send": ["CtrlL:up WinL:down currentKey:down", "currentKey:up WinL:up CtrlL:down"]
+        },
+        {
+          "keys": ["Tab", "UpArrow", "DownArrow"],
           "if": { "WinL": true, "CtrlL": true },
           "send": ["CtrlL:up WinL:down currentKey:down currentKey:up WinL:up CtrlL:down", null]
         },
